@@ -428,6 +428,19 @@
     "@ethersproject/properties" "^5.2.0"
     "@ethersproject/strings" "^5.2.0"
 
+"@gton-capital/ogs-sdk@^3.0.21":
+  version "3.0.21"
+  resolved "https://npm.pkg.github.com/download/@gton-capital/ogs-sdk/3.0.21/b4e9ac0676c52647191bdaa078a3b545840ed786#b4e9ac0676c52647191bdaa078a3b545840ed786"
+  integrity sha512-rFwVdyjleB1c8/KZk5xka1WnLtoxkESYKzSSr80PMfRDvxNXcirC9XSqHIXyQgheJdTptAvDhWbiKJRrC+FEjA==
+  dependencies:
+    "@uniswap/v2-core" "^1.0.0"
+    big.js "^5.2.2"
+    decimal.js-light "^2.5.0"
+    jsbi "^3.1.1"
+    tiny-invariant "^1.1.0"
+    tiny-warning "^1.0.3"
+    toformat "^2.0.0"
+
 "@keydonix/uniswap-oracle-sdk@^1.0.6":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@keydonix/uniswap-oracle-sdk/-/uniswap-oracle-sdk-1.0.6.tgz#d0f8ff9159e1b225a33080647614ee940ef98956"
@@ -475,19 +488,6 @@
   integrity sha512-+ZjSA8ELlOp8SlKi0YLB2tz9d5iPNEmOBd+8Rz21wTMdaXQIa9b6TEnD6l5qKOCypE7FSyPyck12qZJxSDNoog==
   dependencies:
     "@types/node" "*"
-
-"@uniswap/sdk@^3.0.3":
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/@uniswap/sdk/-/sdk-3.0.3.tgz#8201c7c72215d0030cb99acc7e661eff895c18a9"
-  integrity sha512-t4s8bvzaCFSiqD2qfXIm3rWhbdnXp+QjD3/mRaeVDHK7zWevs6RGEb1ohMiNgOCTZANvBayb4j8p+XFdnMBadQ==
-  dependencies:
-    "@uniswap/v2-core" "^1.0.0"
-    big.js "^5.2.2"
-    decimal.js-light "^2.5.0"
-    jsbi "^3.1.1"
-    tiny-invariant "^1.1.0"
-    tiny-warning "^1.0.3"
-    toformat "^2.0.0"
 
 "@uniswap/v2-core@^1.0.0":
   version "1.0.1"

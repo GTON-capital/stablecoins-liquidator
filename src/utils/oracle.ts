@@ -1,5 +1,5 @@
 import { web3, web3Proof } from 'src/provider'
-import { Pair, Token } from '@uniswap/sdk'
+import { Pair, Token } from '@gton-capital/ogs-sdk'
 import { getCreate2Address } from '@ethersproject/address'
 import { keccak256, pack } from '@ethersproject/solidity'
 import {
@@ -7,13 +7,9 @@ import {
   SHIBASWAP_PAIR_INIT_CODE_HASH,
   SUSHISWAP_FACTORY,
   SUSHISWAP_PAIR_INIT_CODE_HASH,
-  WETH
+  WETH,
 } from 'src/constants'
-import {
-  getOracleType,
-  getToken0,
-  getToken1,
-} from 'src/utils/index'
+import { getOracleType, getToken0, getToken1 } from 'src/utils/index'
 
 const Q112 = BigInt('0x10000000000000000000000000000')
 export const lookbackBlocks = 119
@@ -35,15 +31,15 @@ export async function _getProof(address: bigint, positions: readonly bigint[], b
   const encodedBlockTag = bigintToHexQuantity(block)
 
   const result: any = await web3Proof.eth.getProof(encodedAddress, encodedPositions, encodedBlockTag)
-  const accountProof = result.accountProof.map(entry => {
+  const accountProof = result.accountProof.map((entry) => {
     return stringToByteArray(entry)
   })
 
-  const storageProof = result.storageProof.map(entry => {
+  const storageProof = result.storageProof.map((entry) => {
     return {
       key: BigInt(entry.key),
       value: BigInt(entry.key),
-      proof: entry.proof.map(proofEntry => {
+      proof: entry.proof.map((proofEntry) => {
         return stringToByteArray(proofEntry)
       }),
     }
@@ -78,21 +74,18 @@ export async function getMerkleProofForLp(
   exchangeAddress: string,
   blockNumber: bigint,
 ): Promise<[string, string, string, string]> {
-  const [token0Address, token1Address] = await Promise.all([
-    getToken0(exchangeAddress),
-    getToken1(exchangeAddress),
-  ])
+  const [token0Address, token1Address] = await Promise.all([getToken0(exchangeAddress), getToken1(exchangeAddress)])
 
-  let token;
+  let token
   if (token0Address.toLowerCase() === WETH.toLowerCase()) {
-    token = token1Address.toLowerCase();
+    token = token1Address.toLowerCase()
   } else if (token1Address.toLowerCase() === WETH.toLowerCase()) {
-    token = token0Address.toLowerCase();
+    token = token0Address.toLowerCase()
   } else {
     throw new Error(`Unsupported pair ${token0Address} ${token1Address}`)
   }
 
-  const oracleType = await getOracleType(token);
+  const oracleType = await getOracleType(token)
 
   return getMerkleProof(BigInt(getLPAddressByOracle(oracleType, token, WETH)), BigInt(WETH), blockNumber)
 }
@@ -126,13 +119,12 @@ export async function getMerkleProof(
     `0x${bufferToHex(blockRlp)}`,
     `0x${bufferToHex(accountProofNodesRlp)}`,
     `0x${bufferToHex(reserveAndTimestampProofNodesRlp)}`,
-    `0x${bufferToHex(priceAccumulatorProofNodesRlp)}`
+    `0x${bufferToHex(priceAccumulatorProofNodesRlp)}`,
   ]
 }
 
-
 function bufferToHex(buffer: Uint8Array) {
-  return [...new Uint8Array(buffer)].map(b => b.toString(16).padStart(2, '0')).join('')
+  return [...new Uint8Array(buffer)].map((b) => b.toString(16).padStart(2, '0')).join('')
 }
 
 function addressToString(value: bigint) {
@@ -409,7 +401,7 @@ function stringToBigint(hex: string): bigint {
 export function getLPAddressByOracle(oracleType: ORACLE_TYPES, asset1: string, asset2: string): string {
   switch (oracleType) {
     case ORACLE_TYPES.KEYDONIX_UNI:
-      return uniLPAddress(asset1, asset2);
+      return uniLPAddress(asset1, asset2)
     case ORACLE_TYPES.KEYDONIX_SUSHI:
       return sushiLPAddress(asset1, asset2)
     case ORACLE_TYPES.KEYDONIX_SHIBA:
@@ -451,7 +443,7 @@ function getSushiSwapAddress(tokenA: Token, tokenB: Token): string {
   return getCreate2Address(
     SUSHISWAP_FACTORY,
     keccak256(['bytes'], [pack(['address', 'address'], [tokens[0].address, tokens[1].address])]),
-    SUSHISWAP_PAIR_INIT_CODE_HASH
+    SUSHISWAP_PAIR_INIT_CODE_HASH,
   )
 }
 
@@ -461,6 +453,6 @@ function getShibaSwapAddress(tokenA: Token, tokenB: Token): string {
   return getCreate2Address(
     SHIBASWAP_FACTORY,
     keccak256(['bytes'], [pack(['address', 'address'], [tokens[0].address, tokens[1].address])]),
-    SHIBASWAP_PAIR_INIT_CODE_HASH
+    SHIBASWAP_PAIR_INIT_CODE_HASH,
   )
 }

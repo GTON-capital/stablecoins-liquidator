@@ -13,6 +13,8 @@ jobs:
       version: ${{ steps.version-result.outputs.version }}
     permissions:
       contents: write
+    env:
+        GITHUB_NPM_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: 'Checkout source code'

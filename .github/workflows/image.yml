@@ -34,7 +34,7 @@ jobs:
       uses: docker/build-push-action@v4
       env:
         VERSION: "${{ inputs.version }}"
-        PACKAGE: "ghcr.io/gton-capital/quiz-backend"
+        PACKAGE: "ghcr.io/gton-capital/stablecoins-liquidator"
       with:
         context: .
         platforms: linux/amd64

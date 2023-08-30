@@ -1,0 +1,44 @@
+name: Bump version
+
+on:
+  push:
+    branches:
+      - 'gton'
+
+jobs:
+  bump-version:
+    name: 'Bump Version on main'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version-result.outputs.version }}
+    permissions:
+      contents: write
+
+    steps:
+      - name: 'Checkout source code'
+        uses: 'actions/checkout@v2'
+        with:
+          ref: ${{ github.ref }}
+      - name: 'cat package.json'
+        run: cat ./package.json
+      - name: 'Setup Node.js'
+        uses: 'actions/setup-node@v1'
+        with:
+          node-version: 12
+      - name: 'Automated Version Bump'
+        id: version-bump
+        uses: 'phips28/gh-action-bump-version@master'
+        with:
+          tag-prefix: 'v'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'cat package.json'
+        run: cat ./package.json
+      - run: echo "version=${{ steps.version-bump.outputs.newTag }}" >> "$GITHUB_OUTPUT"
+        id: version-result
+
+  docker-image:
+    needs: bump-version
+    uses: ./.github/workflows/image.yml
+    with:
+      version: ${{ needs.bump-version.outputs.version }}

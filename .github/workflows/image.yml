@@ -14,10 +14,13 @@ jobs:
   register:
     name: Package, Publish, and Register
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
+    - name: Generate a token
+      id: generate_token
+      uses: tibdex/github-app-token@b62528385c34dbc9f38e5f4225ac829252d1ea92
+      with:
+        app_id: ${{ secrets.APP_ID }}
+        private_key: ${{ secrets.APP_PRIVATE_KEY }}
     - id: checkout
       uses: actions/checkout@v3
     - name: Set up QEMU
@@ -35,7 +38,7 @@ jobs:
       env:
         VERSION: "${{ inputs.version }}"
         PACKAGE: "ghcr.io/gton-capital/stablecoins-liquidator"
-        GITHUB_NPM_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_NPM_REGISTRY_TOKEN: ${{ steps.generate_token.outputs.token }}
       with:
         context: .
         platforms: linux/amd64

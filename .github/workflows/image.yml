@@ -35,9 +35,10 @@ jobs:
       env:
         VERSION: "${{ inputs.version }}"
         PACKAGE: "ghcr.io/gton-capital/stablecoins-liquidator"
+        GITHUB_NPM_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         context: .
         platforms: linux/amd64
         push: true
         tags: ${{ env.PACKAGE }}:${{ env.VERSION }},${{ env.PACKAGE }}:latest
-        build-args: GITHUB_NPM_REGISTRY_TOKEN=${{ secrets.GITHUB_TOKEN }}
+        build-args: GITHUB_NPM_REGISTRY_TOKEN=${GITHUB_NPM_REGISTRY_TOKEN}

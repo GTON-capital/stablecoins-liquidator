@@ -14,6 +14,9 @@ jobs:
   register:
     name: Package, Publish, and Register
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
     - name: Generate a token
       id: generate_token

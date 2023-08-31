@@ -1,5 +1,6 @@
 FROM node:18.12-alpine3.16 as build_stage
 WORKDIR /app
+ARG GITHUB_NPM_REGISTRY_TOKEN
 COPY package.json ./
 COPY tsconfig.json ./
 COPY yarn.lock ./
@@ -11,6 +12,7 @@ RUN npx tsc
 
 FROM node:18.12-alpine3.16
 WORKDIR /app
+ARG GITHUB_NPM_REGISTRY_TOKEN
 COPY --from=build_stage /app/dist dist/
 COPY config.yaml ./
 COPY .npmrc ./

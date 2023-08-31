@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "liquidator.fullname" . }}
+  labels:
+    {{- include "liquidator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "liquidator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "liquidator.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "liquidator.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - secretRef:
+                name: {{ print (include "liquidator.fullname" .) "-tg-secret" }}
+          env:
+            - name: CHAIN_NAME
+              value: "{{ .Values.liquidator.chainName }}"
+            - name: IGNORE_POSITIONS
+              value: "{{ .Values.liquidator.ignorePositions }}"
+            - name: {{ .Values.liquidator.chainName | upper }}_WEBSOCKET_URL
+              valueFrom:
+              {{- if not (empty .Values.liquidator.nodeRef.configMapName) }}
+                configMapKeyRef:
+                  name: {{ .Values.liquidator.nodeRef.configMapName }}
+                  key: "ws-url"
+              {{- else if not (empty .Values.liquidator.nodeRef.secretName)}}
+                secretKeyRef:
+                  name: {{ .Values.liquidator.nodeRef.secretName }}
+                  key: "ws-url"
+              {{- else }}
+              {{- fail "ConfigMap or Secret with node connection must be provided" }}
+              {{- end }}
+            - name: ETHEREUM_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.liquidator.eoaSecretName }}
+                  key: "public"
+            - name: ETHEREUM_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.liquidator.eoaSecretName }}
+                  key: "private"
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

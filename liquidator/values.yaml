@@ -67,11 +67,5 @@ liquidator:
   nodeRef:
     configMapName:
     secretName:
-  telegram:
-    token:
-    chat:
-      defaultId:
-      liquidationId:
-      logsId:
-      sentryId:
+  telegramSecretName:
   ignorePositions:

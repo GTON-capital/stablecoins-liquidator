@@ -62,6 +62,31 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.liquidator.eoaSecretName }}
                   key: "private"
+            - name: TELEGRAM_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.liquidator.telegramSecretName }}
+                  key: "token"
+            - name: TELEGRAM_CHAT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.liquidator.telegramSecretName }}
+                  key: "defaultId"
+            - name: LIQUIDATION_TELEGRAM_CHAT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.liquidator.telegramSecretName }}
+                  key: "liquidationId"
+            - name: LOGS_TELEGRAM_CHAT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.liquidator.telegramSecretName }}
+                  key: "logsId"
+            - name: SENTRY_TELEGRAM_CHAT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.liquidator.telegramSecretName }}
+                  key: "sentryId"
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

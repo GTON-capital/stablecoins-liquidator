@@ -1,8 +1,12 @@
 image:
-  tag: '1.0.6'
+  tag: 'v1.2.0'
 
-# imagePullSecrets:
-#   - name: 'ghcr'
+volumes:
+  data:
+    storageClass: linode-block-storage-retain
+
+imagePullSecrets:
+  - name: 'ghcr'
 
 liquidator:
   chainName: gtontestnet

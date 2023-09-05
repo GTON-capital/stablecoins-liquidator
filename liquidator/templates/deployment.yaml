@@ -97,15 +97,15 @@ spec:
               path: /health
               port: http
           volumeMounts:
-            - mountPath: "/data"
-              name: data
+          - mountPath: "/app/data"
+            name: service-data
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
       volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: {{ include "liquidator.fullname" . }}-data-pvc
+      - name: service-data
+        persistentVolumeClaim:
+          claimName: {{ include "liquidator.fullname" . }}-data-pvc
+      {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
